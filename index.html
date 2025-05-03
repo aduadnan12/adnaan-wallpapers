@@ -667,7 +667,44 @@
             e.preventDefault();
             adminPanel.scrollIntoView({ behavior: 'smooth' });
         });
-        
+
+        // IndexedDB Database Setup
+        let db;
+        const request = indexedDB.open('WallpaperHubDB', 1);
+
+        request.onerror = function(event) {
+            console.error("Database error:", event.target.error);
+        };
+
+        request.onupgradeneeded = function(event) {
+            db = event.target.result;
+            const store = db.createObjectStore('wallpapers', { keyPath: 'id' });
+            store.createIndex('category', 'category', { unique: false });
+        };
+
+        request.onsuccess = function(event) {
+            db = event.target.result;
+            refreshGalleries();
+        };
+
+        // Add wallpaper to IndexedDB
+        function addWallpaper(wallpaper) {
+            const transaction = db.transaction(['wallpapers'], 'readwrite');
+            const store = transaction.objectStore('wallpapers');
+            store.add(wallpaper);
+        }
+
+        // Get all wallpapers from IndexedDB
+        function getAllWallpapers(callback) {
+            const transaction = db.transaction(['wallpapers'], 'readonly');
+            const store = transaction.objectStore('wallpapers');
+            const request = store.getAll();
+            
+            request.onsuccess = function() {
+                callback(request.result);
+            };
+        }
+
         // Add Wallpaper functionality
         document.getElementById('addWallpaperForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -684,79 +721,153 @@
             const reader = new FileReader();
             
             reader.onload = function(event) {
-                const imgUrl = event.target.result;
+                const wallpaper = {
+                    imgUrl: event.target.result,
+                    title,
+                    category,
+                    resolution,
+                    isPremium,
+                    id: Date.now()
+                };
                 
-                // Create new wallpaper card
-                const wallpaperCard = document.createElement('div');
-                wallpaperCard.className = 'wallpaper-card';
-                wallpaperCard.dataset.category = category;
-                
-                if (isPremium) {
-                    wallpaperCard.innerHTML = `
-                        <div class="premium-badge">Premium</div>
-                        <img src="${imgUrl}" alt="${title}" class="wallpaper-img">
-                        <div class="wallpaper-info">
-                            <div class="wallpaper-title">${title}</div>
-                            <div class="wallpaper-category">${category}</div>
-                            <div class="wallpaper-resolution">${resolution}</div>
-                            <button class="download-btn premium-download">Unlock Premium</button>
-                        </div>
-                    `;
-                } else {
-                    wallpaperCard.innerHTML = `
-                        <img src="${imgUrl}" alt="${title}" class="wallpaper-img">
-                        <div class="wallpaper-info">
-                            <div class="wallpaper-title">${title}</div>
-                            <div class="wallpaper-category">${category}</div>
-                            <div class="wallpaper-resolution">${resolution}</div>
-                            <button class="download-btn" data-img="${imgUrl}">Download</button>
-                        </div>
-                    `;
-                }
-                
-                // Add to both galleries
-                document.getElementById('mainGallery').appendChild(wallpaperCard.cloneNode(true));
-                document.getElementById('adminGallery').appendChild(wallpaperCard);
-                
-                // Reset form
+                addWallpaper(wallpaper);
+                refreshGalleries();
                 e.target.reset();
-                
-                // Add event listener to new download button if not premium
-                if (!isPremium) {
-                    const newDownloadBtn = wallpaperCard.querySelector('.download-btn');
-                    newDownloadBtn.addEventListener('click', function() {
-                        downloadWallpaper(imgUrl, title);
-                    });
-                }
-                
                 alert('Wallpaper added successfully!');
             };
             
             reader.readAsDataURL(file);
         });
-        
-        // Add Category functionality
-        document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+
+        // Function to create wallpaper card
+        function createWallpaperCard(wallpaper) {
+            const wallpaperCard = document.createElement('div');
+            wallpaperCard.className = 'wallpaper-card';
+            wallpaperCard.dataset.category = wallpaper.category;
             
-            const categoryName = document.getElementById('newCategoryName').value;
-            const categoryValue = categoryName.toLowerCase().replace(/\s+/g, '-');
+            if (wallpaper.isPremium) {
+                wallpaperCard.innerHTML = `
+                    <div class="premium-badge">Premium</div>
+                    <img src="${wallpaper.imgUrl}" alt="${wallpaper.title}" class="wallpaper-img">
+                    <div class="wallpaper-info">
+                        <div class="wallpaper-title">${wallpaper.title}</div>
+                        <div class="wallpaper-category">${wallpaper.category}</div>
+                        <div class="wallpaper-resolution">${wallpaper.resolution}</div>
+                        <button class="download-btn premium-download">Unlock Premium</button>
+                    </div>
+                `;
+            } else {
+                wallpaperCard.innerHTML = `
+                    <img src="${wallpaper.imgUrl}" alt="${wallpaper.title}" class="wallpaper-img">
+                    <div class="wallpaper-info">
+                        <div class="wallpaper-title">${wallpaper.title}</div>
+                        <div class="wallpaper-category">${wallpaper.category}</div>
+                        <div class="wallpaper-resolution">${wallpaper.resolution}</div>
+                        <button class="download-btn" data-img="${wallpaper.imgUrl}">Download</button>
+                    </div>
+                `;
+            }
             
-            // Create new category button
-            const categoryBtn = document.createElement('button');
-            categoryBtn.className = 'category-btn';
-            categoryBtn.dataset.category = categoryValue;
-            categoryBtn.textContent = categoryName;
+            return wallpaperCard;
+        }
+
+        // Function to refresh galleries
+        function refreshGalleries() {
+            getAllWallpapers(function(wallpapers) {
+                const mainGallery = document.getElementById('mainGallery');
+                const adminGallery = document.getElementById('adminGallery');
+                
+                mainGallery.innerHTML = '';
+                adminGallery.innerHTML = '';
+                
+                wallpapers.forEach(wallpaper => {
+                    const wallpaperCard = createWallpaperCard(wallpaper);
+                    mainGallery.appendChild(wallpaperCard.cloneNode(true));
+                    adminGallery.appendChild(wallpaperCard);
+                });
+                
+                // Add event listeners to all download buttons
+                document.querySelectorAll('.download-btn:not(.premium-download)').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const imgUrl = this.getAttribute('data-img');
+                        const title = this.parentElement.querySelector('.wallpaper-title').textContent;
+                        downloadWallpaper(imgUrl, title);
+                    });
+                });
+                
+                // Add event listeners to premium download buttons
+                document.querySelectorAll('.premium-download').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        document.getElementById('premiumModal').style.display = 'block';
+                    });
+                });
+                
+                // Add sample wallpapers if database is empty
+                if (wallpapers.length === 0) {
+                    initializeSampleWallpapers();
+                }
+            });
+        }
+
+        // Function to initialize sample wallpapers
+        function initializeSampleWallpapers() {
+            const sampleWallpapers = [
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+                    title: "Mountain Lake",
+                    category: "nature",
+                    resolution: "1920x1080",
+                    isPremium: false,
+                    id: 1
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d",
+                    title: "Misty Forest",
+                    category: "nature",
+                    resolution: "1920x1080",
+                    isPremium: false,
+                    id: 2
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1579547945413-497e1b99dac0",
+                    title: "Color Waves",
+                    category: "abstract",
+                    resolution: "1920x1080",
+                    isPremium: false,
+                    id: 3
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2",
+                    title: "Abstract Liquid",
+                    category: "abstract",
+                    resolution: "1920x1080",
+                    isPremium: false,
+                    id: 4
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1541963463532-d68292c34b19",
+                    title: "Exclusive Design 1",
+                    category: "premium",
+                    resolution: "4K Ultra HD",
+                    isPremium: true,
+                    id: 5
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
+                    title: "Exclusive Design 2",
+                    category: "premium",
+                    resolution: "4K Ultra HD",
+                    isPremium: true,
+                    id: 6
+                }
+            ];
             
-            // Add to categories section
-            document.querySelector('.categories').insertBefore(categoryBtn, document.querySelector('.categories').lastChild);
-            
-            // Reset form
-            e.target.reset();
-            
-            alert(`Category "${categoryName}" added successfully!`);
-        });
-        
+            sampleWallpapers.forEach(wallpaper => {
+                addWallpaper(wallpaper);
+            });
+        }
+
         // Function to handle wallpaper download
         function downloadWallpaper(imgUrl, title) {
             const spinner = document.getElementById('loadingSpinner');
@@ -813,107 +924,7 @@
                 spinner.style.display = 'none';
             };
         }
-        
-        // Initialize the galleries with sample wallpapers
-        function initializeGalleries() {
-            const wallpapers = [
-                {
-                    imgUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-                    title: "Mountain Lake",
-                    category: "nature",
-                    resolution: "1920x1080",
-                    premium: false
-                },
-                {
-                    imgUrl: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d",
-                    title: "Misty Forest",
-                    category: "nature",
-                    resolution: "1920x1080",
-                    premium: false
-                },
-                {
-                    imgUrl: "https://images.unsplash.com/photo-1579547945413-497e1b99dac0",
-                    title: "Color Waves",
-                    category: "abstract",
-                    resolution: "1920x1080",
-                    premium: false
-                },
-                {
-                    imgUrl: "https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2",
-                    title: "Abstract Liquid",
-                    category: "abstract",
-                    resolution: "1920x1080",
-                    premium: false
-                },
-                {
-                    imgUrl: "https://images.unsplash.com/photo-1474511320723-9a56873867b5",
-                    title: "Wild Fox",
-                    category: "animals",
-                    resolution: "1920x1080",
-                    premium: false
-                },
-                {
-                    imgUrl: "https://images.unsplash.com/photo-1497752531616-c3afd9760b11",
-                    title: "Colorful Parrot",
-                    category: "animals",
-                    resolution: "1920x1080",
-                    premium: false
-                },
-                {
-                    imgUrl: "https://images.unsplash.com/photo-1541963463532-d68292c34b19",
-                    title: "Exclusive Design 1",
-                    category: "premium",
-                    resolution: "4K Ultra HD",
-                    premium: true
-                },
-                {
-                    imgUrl: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
-                    title: "Exclusive Design 2",
-                    category: "premium",
-                    resolution: "4K Ultra HD",
-                    premium: true
-                }
-            ];
-            
-            const mainGallery = document.getElementById('mainGallery');
-            const adminGallery = document.getElementById('adminGallery');
-            
-            wallpapers.forEach(wallpaper => {
-                const wallpaperCard = document.createElement('div');
-                wallpaperCard.className = 'wallpaper-card';
-                wallpaperCard.dataset.category = wallpaper.category;
-                
-                if (wallpaper.premium) {
-                    wallpaperCard.innerHTML = `
-                        <div class="premium-badge">Premium</div>
-                        <img src="${wallpaper.imgUrl}" alt="${wallpaper.title}" class="wallpaper-img">
-                        <div class="wallpaper-info">
-                            <div class="wallpaper-title">${wallpaper.title}</div>
-                            <div class="wallpaper-category">${wallpaper.category}</div>
-                            <div class="wallpaper-resolution">${wallpaper.resolution}</div>
-                            <button class="download-btn premium-download">Unlock Premium</button>
-                        </div>
-                    `;
-                } else {
-                    wallpaperCard.innerHTML = `
-                        <img src="${wallpaper.imgUrl}" alt="${wallpaper.title}" class="wallpaper-img">
-                        <div class="wallpaper-info">
-                            <div class="wallpaper-title">${wallpaper.title}</div>
-                            <div class="wallpaper-category">${wallpaper.category}</div>
-                            <div class="wallpaper-resolution">${wallpaper.resolution}</div>
-                            <button class="download-btn" data-img="${wallpaper.imgUrl}">Download</button>
-                        </div>
-                    `;
-                }
-                
-                mainGallery.appendChild(wallpaperCard.cloneNode(true));
-                adminGallery.appendChild(wallpaperCard);
-            });
-        }
-        
-        // Initialize the galleries when page loads
-        window.addEventListener('DOMContentLoaded', initializeGalleries);
-        
+
         // Category filter functionality
         document.querySelectorAll('.category-btn').forEach(button => {
             button.addEventListener('click', () => {
@@ -959,7 +970,6 @@
         // About Us Modal functionality
         const aboutModal = document.getElementById("aboutModal");
         const aboutLink = document.getElementById("aboutLink");
-        const closeBtn = document.querySelector(".close-btn");
         
         aboutLink.addEventListener("click", function(e) {
             e.preventDefault();
@@ -969,18 +979,10 @@
         // Premium Modal functionality
         const premiumModal = document.getElementById("premiumModal");
         const premiumLink = document.getElementById("premiumLink");
-        const premiumDownloads = document.querySelectorAll('.premium-download');
         
         premiumLink.addEventListener("click", function(e) {
             e.preventDefault();
             premiumModal.style.display = "block";
-        });
-        
-        premiumDownloads.forEach(button => {
-            button.addEventListener("click", function(e) {
-                e.preventDefault();
-                premiumModal.style.display = "block";
-            });
         });
         
         // Close modal functionality
@@ -997,14 +999,10 @@
                 premiumModal.style.display = "none";
             }
         });
-        
-        // Download functionality with watermark
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('download-btn') && !e.target.classList.contains('premium-download')) {
-                const imgUrl = e.target.getAttribute('data-img');
-                const title = e.target.parentElement.querySelector('.wallpaper-title').textContent;
-                downloadWallpaper(imgUrl, title);
-            }
+
+        // Initialize the galleries when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            refreshGalleries();
         });
     </script>
 </body>
