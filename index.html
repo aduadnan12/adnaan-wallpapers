@@ -111,6 +111,7 @@
             overflow: hidden;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             transition: transform 0.3s;
+            position: relative;
         }
         
         .wallpaper-card:hover {
@@ -153,6 +154,18 @@
         
         .download-btn:hover {
             background-color: #9d50bb;
+        }
+        
+        .premium-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: gold;
+            color: black;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.8rem;
         }
         
         footer {
@@ -205,6 +218,65 @@
             font-weight: bold;
         }
         
+        /* Premium Modal Styles */
+        .premium-modal-content {
+            background-color: #f4f4f4;
+            margin: 15% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .premium-features {
+            text-align: left;
+            margin: 20px 0;
+        }
+        
+        .premium-features li {
+            margin-bottom: 10px;
+        }
+        
+        .subscribe-btn {
+            background-color: gold;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        
+        .subscribe-btn:hover {
+            background-color: #ffd700;
+            transform: scale(1.05);
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #6e48aa;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            z-index: 1000;
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -214,7 +286,7 @@
                 width: 80%;
             }
             
-            .modal-content {
+            .modal-content, .premium-modal-content {
                 width: 90%;
                 margin: 30% auto;
             }
@@ -222,6 +294,8 @@
     </style>
 </head>
 <body>
+    <div class="spinner" id="loadingSpinner"></div>
+    
     <header>
         <div class="logo">Wallpaper Hub</div>
         <div class="tag">by Adnan</div>
@@ -229,10 +303,10 @@
     
     <nav>
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Popular</a></li>
-            <li><a href="#">Categories</a></li>
-            <li><a href="#">Premium</a></li>
+            <li><a href="#" id="homeLink">Home</a></li>
+            <li><a href="#" id="popularLink">Popular</a></li>
+            <li><a href="#" id="categoriesLink">Categories</a></li>
+            <li><a href="#" id="premiumLink">Premium</a></li>
             <li><a href="#" id="aboutLink">About</a></li>
         </ul>
     </nav>
@@ -246,6 +320,28 @@
             <p>Created by Adnan, this website offers a wide variety of wallpapers to suit all tastes.</p>
             <div class="phone-number">Contact: 600502121</div>
             <p>Feel free to reach out for any inquiries or special requests!</p>
+        </div>
+    </div>
+    
+    <!-- Premium Modal -->
+    <div id="premiumModal" class="modal">
+        <div class="premium-modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Premium Membership</h2>
+            <p>Unlock exclusive wallpapers and features with our premium membership!</p>
+            
+            <div class="premium-features">
+                <h3>Premium Benefits:</h3>
+                <ul>
+                    <li>Access to 1000+ exclusive wallpapers</li>
+                    <li>4K Ultra HD quality downloads</li>
+                    <li>No watermarks on any wallpapers</li>
+                    <li>Early access to new collections</li>
+                    <li>Priority customer support</li>
+                </ul>
+            </div>
+            
+            <button class="subscribe-btn">Subscribe Now - ₹99/month</button>
         </div>
     </div>
     
@@ -263,6 +359,7 @@
         <button class="category-btn" data-category="anime">Anime</button>
         <button class="category-btn" data-category="space">Space</button>
         <button class="category-btn" data-category="minimal">Minimal</button>
+        <button class="category-btn" data-category="premium">Premium</button>
     </div>
     
     <div class="gallery">
@@ -273,7 +370,7 @@
                 <div class="wallpaper-title">Mountain Lake</div>
                 <div class="wallpaper-category">Nature</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1506744038136-46273834b3fb">Download</button>
             </div>
         </div>
         
@@ -283,7 +380,7 @@
                 <div class="wallpaper-title">Misty Forest</div>
                 <div class="wallpaper-category">Nature</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d">Download</button>
             </div>
         </div>
         
@@ -294,7 +391,7 @@
                 <div class="wallpaper-title">Color Waves</div>
                 <div class="wallpaper-category">Abstract</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1579547945413-497e1b99dac0">Download</button>
             </div>
         </div>
         
@@ -304,7 +401,7 @@
                 <div class="wallpaper-title">Abstract Liquid</div>
                 <div class="wallpaper-category">Abstract</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2">Download</button>
             </div>
         </div>
         
@@ -315,7 +412,7 @@
                 <div class="wallpaper-title">Wild Fox</div>
                 <div class="wallpaper-category">Animals</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1474511320723-9a56873867b5">Download</button>
             </div>
         </div>
         
@@ -325,7 +422,7 @@
                 <div class="wallpaper-title">Colorful Parrot</div>
                 <div class="wallpaper-category">Animals</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1497752531616-c3afd9760b11">Download</button>
             </div>
         </div>
         
@@ -336,7 +433,7 @@
                 <div class="wallpaper-title">New York City</div>
                 <div class="wallpaper-category">Cities</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1483729558449-99ef09a8c325">Download</button>
             </div>
         </div>
         
@@ -346,7 +443,7 @@
                 <div class="wallpaper-title">Tokyo Streets</div>
                 <div class="wallpaper-category">Cities</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1542051841857-5f90071e7989">Download</button>
             </div>
         </div>
         
@@ -357,7 +454,7 @@
                 <div class="wallpaper-title">Luxury Sports Car</div>
                 <div class="wallpaper-category">Cars</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d">Download</button>
             </div>
         </div>
         
@@ -367,7 +464,7 @@
                 <div class="wallpaper-title">Vintage Classic</div>
                 <div class="wallpaper-category">Cars</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1502877338535-766e1452684a">Download</button>
             </div>
         </div>
         
@@ -378,7 +475,7 @@
                 <div class="wallpaper-title">Anime Character</div>
                 <div class="wallpaper-category">Anime</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d">Download</button>
             </div>
         </div>
         
@@ -388,7 +485,7 @@
                 <div class="wallpaper-title">Anime Cityscape</div>
                 <div class="wallpaper-category">Anime</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1637858868799-7f26a0640eb6">Download</button>
             </div>
         </div>
         
@@ -399,7 +496,7 @@
                 <div class="wallpaper-title">Milky Way</div>
                 <div class="wallpaper-category">Space</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1462331940025-496dfbfc7564">Download</button>
             </div>
         </div>
         
@@ -409,7 +506,7 @@
                 <div class="wallpaper-title">Cosmic Nebula</div>
                 <div class="wallpaper-category">Space</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1454789548928-9efd52dc4031">Download</button>
             </div>
         </div>
         
@@ -420,7 +517,7 @@
                 <div class="wallpaper-title">Simple Lines</div>
                 <div class="wallpaper-category">Minimal</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1558470598-a5dda9640f68">Download</button>
             </div>
         </div>
         
@@ -430,7 +527,30 @@
                 <div class="wallpaper-title">Geometric</div>
                 <div class="wallpaper-category">Minimal</div>
                 <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn">Download</button>
+                <button class="download-btn" data-img="https://images.unsplash.com/photo-1513151233558-d860c5398176">Download</button>
+            </div>
+        </div>
+        
+        <!-- Premium Wallpapers -->
+        <div class="wallpaper-card" data-category="premium">
+            <div class="premium-badge">Premium</div>
+            <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19" alt="Premium Book" class="wallpaper-img">
+            <div class="wallpaper-info">
+                <div class="wallpaper-title">Exclusive Design 1</div>
+                <div class="wallpaper-category">Premium</div>
+                <div class="wallpaper-resolution">4K Ultra HD</div>
+                <button class="download-btn premium-download">Unlock Premium</button>
+            </div>
+        </div>
+        
+        <div class="wallpaper-card" data-category="premium">
+            <div class="premium-badge">Premium</div>
+            <img src="https://images.unsplash.com/photo-1551963831-b3b1ca40c98e" alt="Premium Art" class="wallpaper-img">
+            <div class="wallpaper-info">
+                <div class="wallpaper-title">Exclusive Design 2</div>
+                <div class="wallpaper-category">Premium</div>
+                <div class="wallpaper-resolution">4K Ultra HD</div>
+                <button class="download-btn premium-download">Unlock Premium</button>
             </div>
         </div>
     </div>
@@ -484,23 +604,105 @@
         });
         
         // About Us Modal functionality
-        const modal = document.getElementById("aboutModal");
+        const aboutModal = document.getElementById("aboutModal");
         const aboutLink = document.getElementById("aboutLink");
         const closeBtn = document.querySelector(".close-btn");
         
         aboutLink.addEventListener("click", function(e) {
             e.preventDefault();
-            modal.style.display = "block";
+            aboutModal.style.display = "block";
         });
         
-        closeBtn.addEventListener("click", function() {
-            modal.style.display = "none";
+        // Premium Modal functionality
+        const premiumModal = document.getElementById("premiumModal");
+        const premiumLink = document.getElementById("premiumLink");
+        const premiumDownloads = document.querySelectorAll('.premium-download');
+        
+        premiumLink.addEventListener("click", function(e) {
+            e.preventDefault();
+            premiumModal.style.display = "block";
+        });
+        
+        premiumDownloads.forEach(button => {
+            button.addEventListener("click", function(e) {
+                e.preventDefault();
+                premiumModal.style.display = "block";
+            });
+        });
+        
+        // Close modal functionality
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener("click", function() {
+                aboutModal.style.display = "none";
+                premiumModal.style.display = "none";
+            });
         });
         
         window.addEventListener("click", function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
+            if (event.target == aboutModal || event.target == premiumModal) {
+                aboutModal.style.display = "none";
+                premiumModal.style.display = "none";
             }
+        });
+        
+        // Download functionality with watermark
+        document.querySelectorAll('.download-btn:not(.premium-download)').forEach(button => {
+            button.addEventListener('click', function() {
+                const spinner = document.getElementById('loadingSpinner');
+                spinner.style.display = 'block';
+                
+                const imgUrl = this.getAttribute('data-img');
+                const fileName = this.parentElement.querySelector('.wallpaper-title').textContent.replace(/\s+/g, '-') + '.jpg';
+                
+                // Create a canvas to add watermark
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.src = imgUrl;
+                
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Draw the original image
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Add watermark text
+                    ctx.font = '30px Arial';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Adnan', canvas.width/2, canvas.height/2);
+                    
+                    // For mobile devices
+                    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                        // Convert canvas to image and open in new tab
+                        const watermarkedImg = canvas.toDataURL('image/jpeg');
+                        window.open(watermarkedImg, '_blank');
+                        spinner.style.display = 'none';
+                    } else {
+                        // For desktop, download the watermarked image
+                        const link = document.createElement('a');
+                        link.download = fileName;
+                        link.href = canvas.toDataURL('image/jpeg');
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        spinner.style.display = 'none';
+                    }
+                };
+                
+                img.onerror = function() {
+                    // Fallback to direct download if watermarking fails
+                    const link = document.createElement('a');
+                    link.href = imgUrl;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    spinner.style.display = 'none';
+                };
+            });
         });
     </script>
 </body>
