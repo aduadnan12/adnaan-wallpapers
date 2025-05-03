@@ -277,6 +277,161 @@
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
         
+        /* Admin Panel Styles (Hidden by default) */
+        .admin-panel {
+            display: none;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .admin-section {
+            margin-bottom: 30px;
+        }
+        
+        .admin-section h2 {
+            margin-bottom: 15px;
+            color: #6e48aa;
+        }
+        
+        .admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .admin-btn {
+            background-color: #6e48aa;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .admin-btn:hover {
+            background-color: #9d50bb;
+        }
+        
+        .admin-btn.danger {
+            background-color: #e74c3c;
+        }
+        
+        .admin-btn.danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .admin-login {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .login-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #6e48aa;
+        }
+        
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background-color: #6e48aa;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .login-box button:hover {
+            background-color: #9d50bb;
+        }
+        
+        .admin-link {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #6e48aa;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 999;
+        }
+        
+        .admin-link:hover {
+            background-color: #9d50bb;
+        }
+        
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -290,17 +445,108 @@
                 width: 90%;
                 margin: 30% auto;
             }
+            
+            .admin-panel {
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="spinner" id="loadingSpinner"></div>
     
+    <!-- Admin Login (Hidden by default, shown when ?admin=1 is in URL) -->
+    <div class="admin-login" id="adminLogin">
+        <div class="login-box">
+            <h2>Admin Login</h2>
+            <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+            <button id="loginBtn">Login</button>
+        </div>
+    </div>
+    
+    <!-- Admin Panel (Hidden until logged in) -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h1>Wallpaper Hub Admin Panel</h1>
+            <p>Welcome, Adnan</p>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Add New Wallpaper</h2>
+            <form class="admin-form" id="addWallpaperForm">
+                <div class="form-group">
+                    <label for="wallpaperImage">Wallpaper Image</label>
+                    <input type="file" id="wallpaperImage" accept="image/*" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wallpaperTitle">Title</label>
+                    <input type="text" id="wallpaperTitle" placeholder="Enter wallpaper title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wallpaperCategory">Category</label>
+                    <select id="wallpaperCategory" required>
+                        <option value="">Select a category</option>
+                        <option value="nature">Nature</option>
+                        <option value="abstract">Abstract</option>
+                        <option value="animals">Animals</option>
+                        <option value="cities">Cities</option>
+                        <option value="cars">Cars</option>
+                        <option value="anime">Anime</option>
+                        <option value="space">Space</option>
+                        <option value="minimal">Minimal</option>
+                        <option value="premium">Premium</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wallpaperResolution">Resolution</label>
+                    <input type="text" id="wallpaperResolution" placeholder="e.g. 1920x1080" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wallpaperPremium">Premium Wallpaper?</label>
+                    <select id="wallpaperPremium">
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="admin-btn">Add Wallpaper</button>
+            </form>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Manage Wallpapers</h2>
+            <div class="gallery" id="adminGallery">
+                <!-- Wallpapers will be loaded here for management -->
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Add New Category</h2>
+            <form class="admin-form" id="addCategoryForm">
+                <div class="form-group">
+                    <label for="newCategoryName">Category Name</label>
+                    <input type="text" id="newCategoryName" placeholder="Enter new category name" required>
+                </div>
+                
+                <button type="submit" class="admin-btn">Add Category</button>
+            </form>
+        </div>
+        
+        <div class="admin-section">
+            <button class="admin-btn danger" id="logoutBtn">Logout</button>
+        </div>
+    </div>
+    
+    <!-- Main Website Content -->
     <header>
         <div class="logo">Wallpaper Hub</div>
         <div class="tag">by Adnan</div>
     </header>
-    
+
     <nav>
         <ul>
             <li><a href="#" id="homeLink">Home</a></li>
@@ -310,7 +556,7 @@
             <li><a href="#" id="aboutLink">About</a></li>
         </ul>
     </nav>
-    
+
     <!-- About Us Modal -->
     <div id="aboutModal" class="modal">
         <div class="modal-content">
@@ -322,7 +568,7 @@
             <p>Feel free to reach out for any inquiries or special requests!</p>
         </div>
     </div>
-    
+
     <!-- Premium Modal -->
     <div id="premiumModal" class="modal">
         <div class="premium-modal-content">
@@ -344,11 +590,11 @@
             <button class="subscribe-btn">Subscribe Now - ₹99/month</button>
         </div>
     </div>
-    
+
     <div class="search-container">
         <input type="text" class="search-box" placeholder="Search wallpapers...">
     </div>
-    
+
     <div class="categories">
         <button class="category-btn active" data-category="all">All</button>
         <button class="category-btn" data-category="nature">Nature</button>
@@ -361,206 +607,313 @@
         <button class="category-btn" data-category="minimal">Minimal</button>
         <button class="category-btn" data-category="premium">Premium</button>
     </div>
-    
-    <div class="gallery">
-        <!-- Nature Wallpapers -->
-        <div class="wallpaper-card" data-category="nature">
-            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="Mountain Lake" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Mountain Lake</div>
-                <div class="wallpaper-category">Nature</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1506744038136-46273834b3fb">Download</button>
-            </div>
-        </div>
-        
-        <div class="wallpaper-card" data-category="nature">
-            <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d" alt="Forest" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Misty Forest</div>
-                <div class="wallpaper-category">Nature</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d">Download</button>
-            </div>
-        </div>
-        
-        <!-- Abstract Wallpapers -->
-        <div class="wallpaper-card" data-category="abstract">
-            <img src="https://images.unsplash.com/photo-1579547945413-497e1b99dac0" alt="Abstract Colors" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Color Waves</div>
-                <div class="wallpaper-category">Abstract</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1579547945413-497e1b99dac0">Download</button>
-            </div>
-        </div>
-        
-        <div class="wallpaper-card" data-category="abstract">
-            <img src="https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2" alt="Liquid Art" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Abstract Liquid</div>
-                <div class="wallpaper-category">Abstract</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2">Download</button>
-            </div>
-        </div>
-        
-        <!-- Animals Wallpapers -->
-        <div class="wallpaper-card" data-category="animals">
-            <img src="https://images.unsplash.com/photo-1474511320723-9a56873867b5" alt="Fox" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Wild Fox</div>
-                <div class="wallpaper-category">Animals</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1474511320723-9a56873867b5">Download</button>
-            </div>
-        </div>
-        
-        <div class="wallpaper-card" data-category="animals">
-            <img src="https://images.unsplash.com/photo-1497752531616-c3afd9760b11" alt="Parrot" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Colorful Parrot</div>
-                <div class="wallpaper-category">Animals</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1497752531616-c3afd9760b11">Download</button>
-            </div>
-        </div>
-        
-        <!-- Cities Wallpapers -->
-        <div class="wallpaper-card" data-category="cities">
-            <img src="https://images.unsplash.com/photo-1483729558449-99ef09a8c325" alt="New York" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">New York City</div>
-                <div class="wallpaper-category">Cities</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1483729558449-99ef09a8c325">Download</button>
-            </div>
-        </div>
-        
-        <div class="wallpaper-card" data-category="cities">
-            <img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989" alt="Tokyo" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Tokyo Streets</div>
-                <div class="wallpaper-category">Cities</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1542051841857-5f90071e7989">Download</button>
-            </div>
-        </div>
-        
-        <!-- Cars Wallpapers -->
-        <div class="wallpaper-card" data-category="cars">
-            <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d" alt="Sports Car" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Luxury Sports Car</div>
-                <div class="wallpaper-category">Cars</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d">Download</button>
-            </div>
-        </div>
-        
-        <div class="wallpaper-card" data-category="cars">
-            <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a" alt="Classic Car" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Vintage Classic</div>
-                <div class="wallpaper-category">Cars</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1502877338535-766e1452684a">Download</button>
-            </div>
-        </div>
-        
-        <!-- Anime Wallpapers -->
-        <div class="wallpaper-card" data-category="anime">
-            <img src="https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d" alt="Anime Girl" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Anime Character</div>
-                <div class="wallpaper-category">Anime</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d">Download</button>
-            </div>
-        </div>
-        
-        <div class="wallpaper-card" data-category="anime">
-            <img src="https://images.unsplash.com/photo-1637858868799-7f26a0640eb6" alt="Anime Landscape" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Anime Cityscape</div>
-                <div class="wallpaper-category">Anime</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1637858868799-7f26a0640eb6">Download</button>
-            </div>
-        </div>
-        
-        <!-- Space Wallpapers -->
-        <div class="wallpaper-card" data-category="space">
-            <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564" alt="Galaxy" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Milky Way</div>
-                <div class="wallpaper-category">Space</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1462331940025-496dfbfc7564">Download</button>
-            </div>
-        </div>
-        
-        <div class="wallpaper-card" data-category="space">
-            <img src="https://images.unsplash.com/photo-1454789548928-9efd52dc4031" alt="Nebula" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Cosmic Nebula</div>
-                <div class="wallpaper-category">Space</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1454789548928-9efd52dc4031">Download</button>
-            </div>
-        </div>
-        
-        <!-- Minimal Wallpapers -->
-        <div class="wallpaper-card" data-category="minimal">
-            <img src="https://images.unsplash.com/photo-1558470598-a5dda9640f68" alt="Minimal Design" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Simple Lines</div>
-                <div class="wallpaper-category">Minimal</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1558470598-a5dda9640f68">Download</button>
-            </div>
-        </div>
-        
-        <div class="wallpaper-card" data-category="minimal">
-            <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176" alt="Minimal Art" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Geometric</div>
-                <div class="wallpaper-category">Minimal</div>
-                <div class="wallpaper-resolution">1920x1080</div>
-                <button class="download-btn" data-img="https://images.unsplash.com/photo-1513151233558-d860c5398176">Download</button>
-            </div>
-        </div>
-        
-        <!-- Premium Wallpapers -->
-        <div class="wallpaper-card" data-category="premium">
-            <div class="premium-badge">Premium</div>
-            <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19" alt="Premium Book" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Exclusive Design 1</div>
-                <div class="wallpaper-category">Premium</div>
-                <div class="wallpaper-resolution">4K Ultra HD</div>
-                <button class="download-btn premium-download">Unlock Premium</button>
-            </div>
-        </div>
-        
-        <div class="wallpaper-card" data-category="premium">
-            <div class="premium-badge">Premium</div>
-            <img src="https://images.unsplash.com/photo-1551963831-b3b1ca40c98e" alt="Premium Art" class="wallpaper-img">
-            <div class="wallpaper-info">
-                <div class="wallpaper-title">Exclusive Design 2</div>
-                <div class="wallpaper-category">Premium</div>
-                <div class="wallpaper-resolution">4K Ultra HD</div>
-                <button class="download-btn premium-download">Unlock Premium</button>
-            </div>
-        </div>
+
+    <div class="gallery" id="mainGallery">
+        <!-- Wallpapers will be loaded here -->
     </div>
-    
+
     <footer>
         <p>&copy; 2023 Wallpaper Hub. All rights reserved.</p>
         <p>Created by Adnan</p>
     </footer>
+    
+    <!-- Hidden admin access link (only visible when logged in) -->
+    <a href="#" class="admin-link" id="adminAccessLink" title="Admin Panel">A</a>
 
     <script>
+        // Admin Panel Functionality
+        const ADMIN_PASSWORD = "adnan123"; // Change this to your secure password
+        
+        // Check if admin access is requested
+        const urlParams = new URLSearchParams(window.location.search);
+        const adminRequested = urlParams.get('admin') === '1';
+        
+        // Check if already logged in
+        const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+        
+        const adminLogin = document.getElementById('adminLogin');
+        const adminPanel = document.getElementById('adminPanel');
+        const adminAccessLink = document.getElementById('adminAccessLink');
+        
+        if (adminRequested && !isLoggedIn) {
+            adminLogin.style.display = 'flex';
+        } else if (isLoggedIn) {
+            adminPanel.style.display = 'block';
+            adminAccessLink.style.display = 'flex';
+        }
+        
+        // Login functionality
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                localStorage.setItem('adminLoggedIn', 'true');
+                adminLogin.style.display = 'none';
+                adminPanel.style.display = 'block';
+                adminAccessLink.style.display = 'flex';
+            } else {
+                alert('Incorrect password!');
+            }
+        });
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('adminLoggedIn');
+            window.location.href = window.location.pathname; // Reload without admin parameter
+        });
+        
+        // Admin access link
+        adminAccessLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            adminPanel.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Add Wallpaper functionality
+        document.getElementById('addWallpaperForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('wallpaperImage');
+            const title = document.getElementById('wallpaperTitle').value;
+            const category = document.getElementById('wallpaperCategory').value;
+            const resolution = document.getElementById('wallpaperResolution').value;
+            const isPremium = document.getElementById('wallpaperPremium').value === 'yes';
+            
+            if (fileInput.files.length === 0) return;
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                const imgUrl = event.target.result;
+                
+                // Create new wallpaper card
+                const wallpaperCard = document.createElement('div');
+                wallpaperCard.className = 'wallpaper-card';
+                wallpaperCard.dataset.category = category;
+                
+                if (isPremium) {
+                    wallpaperCard.innerHTML = `
+                        <div class="premium-badge">Premium</div>
+                        <img src="${imgUrl}" alt="${title}" class="wallpaper-img">
+                        <div class="wallpaper-info">
+                            <div class="wallpaper-title">${title}</div>
+                            <div class="wallpaper-category">${category}</div>
+                            <div class="wallpaper-resolution">${resolution}</div>
+                            <button class="download-btn premium-download">Unlock Premium</button>
+                        </div>
+                    `;
+                } else {
+                    wallpaperCard.innerHTML = `
+                        <img src="${imgUrl}" alt="${title}" class="wallpaper-img">
+                        <div class="wallpaper-info">
+                            <div class="wallpaper-title">${title}</div>
+                            <div class="wallpaper-category">${category}</div>
+                            <div class="wallpaper-resolution">${resolution}</div>
+                            <button class="download-btn" data-img="${imgUrl}">Download</button>
+                        </div>
+                    `;
+                }
+                
+                // Add to both galleries
+                document.getElementById('mainGallery').appendChild(wallpaperCard.cloneNode(true));
+                document.getElementById('adminGallery').appendChild(wallpaperCard);
+                
+                // Reset form
+                e.target.reset();
+                
+                // Add event listener to new download button if not premium
+                if (!isPremium) {
+                    const newDownloadBtn = wallpaperCard.querySelector('.download-btn');
+                    newDownloadBtn.addEventListener('click', function() {
+                        downloadWallpaper(imgUrl, title);
+                    });
+                }
+                
+                alert('Wallpaper added successfully!');
+            };
+            
+            reader.readAsDataURL(file);
+        });
+        
+        // Add Category functionality
+        document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const categoryName = document.getElementById('newCategoryName').value;
+            const categoryValue = categoryName.toLowerCase().replace(/\s+/g, '-');
+            
+            // Create new category button
+            const categoryBtn = document.createElement('button');
+            categoryBtn.className = 'category-btn';
+            categoryBtn.dataset.category = categoryValue;
+            categoryBtn.textContent = categoryName;
+            
+            // Add to categories section
+            document.querySelector('.categories').insertBefore(categoryBtn, document.querySelector('.categories').lastChild);
+            
+            // Reset form
+            e.target.reset();
+            
+            alert(`Category "${categoryName}" added successfully!`);
+        });
+        
+        // Function to handle wallpaper download
+        function downloadWallpaper(imgUrl, title) {
+            const spinner = document.getElementById('loadingSpinner');
+            spinner.style.display = 'block';
+            
+            const fileName = title.replace(/\s+/g, '-') + '.jpg';
+            
+            // Create a canvas to add watermark
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.src = imgUrl;
+            
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                
+                // Draw the original image
+                ctx.drawImage(img, 0, 0);
+                
+                // Add watermark text
+                ctx.font = '30px Arial';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.textAlign = 'center';
+                ctx.fillText('Adnan', canvas.width/2, canvas.height/2);
+                
+                // For mobile devices
+                if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    // Convert canvas to image and open in new tab
+                    const watermarkedImg = canvas.toDataURL('image/jpeg');
+                    window.open(watermarkedImg, '_blank');
+                    spinner.style.display = 'none';
+                } else {
+                    // For desktop, download the watermarked image
+                    const link = document.createElement('a');
+                    link.download = fileName;
+                    link.href = canvas.toDataURL('image/jpeg');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    spinner.style.display = 'none';
+                }
+            };
+            
+            img.onerror = function() {
+                // Fallback to direct download if watermarking fails
+                const link = document.createElement('a');
+                link.href = imgUrl;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                spinner.style.display = 'none';
+            };
+        }
+        
+        // Initialize the galleries with sample wallpapers
+        function initializeGalleries() {
+            const wallpapers = [
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+                    title: "Mountain Lake",
+                    category: "nature",
+                    resolution: "1920x1080",
+                    premium: false
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d",
+                    title: "Misty Forest",
+                    category: "nature",
+                    resolution: "1920x1080",
+                    premium: false
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1579547945413-497e1b99dac0",
+                    title: "Color Waves",
+                    category: "abstract",
+                    resolution: "1920x1080",
+                    premium: false
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2",
+                    title: "Abstract Liquid",
+                    category: "abstract",
+                    resolution: "1920x1080",
+                    premium: false
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1474511320723-9a56873867b5",
+                    title: "Wild Fox",
+                    category: "animals",
+                    resolution: "1920x1080",
+                    premium: false
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1497752531616-c3afd9760b11",
+                    title: "Colorful Parrot",
+                    category: "animals",
+                    resolution: "1920x1080",
+                    premium: false
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1541963463532-d68292c34b19",
+                    title: "Exclusive Design 1",
+                    category: "premium",
+                    resolution: "4K Ultra HD",
+                    premium: true
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
+                    title: "Exclusive Design 2",
+                    category: "premium",
+                    resolution: "4K Ultra HD",
+                    premium: true
+                }
+            ];
+            
+            const mainGallery = document.getElementById('mainGallery');
+            const adminGallery = document.getElementById('adminGallery');
+            
+            wallpapers.forEach(wallpaper => {
+                const wallpaperCard = document.createElement('div');
+                wallpaperCard.className = 'wallpaper-card';
+                wallpaperCard.dataset.category = wallpaper.category;
+                
+                if (wallpaper.premium) {
+                    wallpaperCard.innerHTML = `
+                        <div class="premium-badge">Premium</div>
+                        <img src="${wallpaper.imgUrl}" alt="${wallpaper.title}" class="wallpaper-img">
+                        <div class="wallpaper-info">
+                            <div class="wallpaper-title">${wallpaper.title}</div>
+                            <div class="wallpaper-category">${wallpaper.category}</div>
+                            <div class="wallpaper-resolution">${wallpaper.resolution}</div>
+                            <button class="download-btn premium-download">Unlock Premium</button>
+                        </div>
+                    `;
+                } else {
+                    wallpaperCard.innerHTML = `
+                        <img src="${wallpaper.imgUrl}" alt="${wallpaper.title}" class="wallpaper-img">
+                        <div class="wallpaper-info">
+                            <div class="wallpaper-title">${wallpaper.title}</div>
+                            <div class="wallpaper-category">${wallpaper.category}</div>
+                            <div class="wallpaper-resolution">${wallpaper.resolution}</div>
+                            <button class="download-btn" data-img="${wallpaper.imgUrl}">Download</button>
+                        </div>
+                    `;
+                }
+                
+                mainGallery.appendChild(wallpaperCard.cloneNode(true));
+                adminGallery.appendChild(wallpaperCard);
+            });
+        }
+        
+        // Initialize the galleries when page loads
+        window.addEventListener('DOMContentLoaded', initializeGalleries);
+        
         // Category filter functionality
         document.querySelectorAll('.category-btn').forEach(button => {
             button.addEventListener('click', () => {
@@ -646,63 +999,12 @@
         });
         
         // Download functionality with watermark
-        document.querySelectorAll('.download-btn:not(.premium-download)').forEach(button => {
-            button.addEventListener('click', function() {
-                const spinner = document.getElementById('loadingSpinner');
-                spinner.style.display = 'block';
-                
-                const imgUrl = this.getAttribute('data-img');
-                const fileName = this.parentElement.querySelector('.wallpaper-title').textContent.replace(/\s+/g, '-') + '.jpg';
-                
-                // Create a canvas to add watermark
-                const img = new Image();
-                img.crossOrigin = 'Anonymous';
-                img.src = imgUrl;
-                
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Draw the original image
-                    ctx.drawImage(img, 0, 0);
-                    
-                    // Add watermark text
-                    ctx.font = '30px Arial';
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('Adnan', canvas.width/2, canvas.height/2);
-                    
-                    // For mobile devices
-                    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                        // Convert canvas to image and open in new tab
-                        const watermarkedImg = canvas.toDataURL('image/jpeg');
-                        window.open(watermarkedImg, '_blank');
-                        spinner.style.display = 'none';
-                    } else {
-                        // For desktop, download the watermarked image
-                        const link = document.createElement('a');
-                        link.download = fileName;
-                        link.href = canvas.toDataURL('image/jpeg');
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        spinner.style.display = 'none';
-                    }
-                };
-                
-                img.onerror = function() {
-                    // Fallback to direct download if watermarking fails
-                    const link = document.createElement('a');
-                    link.href = imgUrl;
-                    link.download = fileName;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    spinner.style.display = 'none';
-                };
-            });
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('download-btn') && !e.target.classList.contains('premium-download')) {
+                const imgUrl = e.target.getAttribute('data-img');
+                const title = e.target.parentElement.querySelector('.wallpaper-title').textContent;
+                downloadWallpaper(imgUrl, title);
+            }
         });
     </script>
 </body>
