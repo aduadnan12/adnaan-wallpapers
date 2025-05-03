@@ -163,6 +163,48 @@
             margin-top: 30px;
         }
         
+        /* About Us Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #f4f4f4;
+            margin: 15% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+        
+        .phone-number {
+            font-size: 1.5rem;
+            color: #6e48aa;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -170,6 +212,11 @@
             
             .search-box {
                 width: 80%;
+            }
+            
+            .modal-content {
+                width: 90%;
+                margin: 30% auto;
             }
         }
     </style>
@@ -186,9 +233,21 @@
             <li><a href="#">Popular</a></li>
             <li><a href="#">Categories</a></li>
             <li><a href="#">Premium</a></li>
-            <li><a href="#">About</a></li>
+            <li><a href="#" id="aboutLink">About</a></li>
         </ul>
     </nav>
+    
+    <!-- About Us Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>About Wallpaper Hub</h2>
+            <p>Welcome to Wallpaper Hub, your one-stop destination for high-quality wallpapers.</p>
+            <p>Created by Adnan, this website offers a wide variety of wallpapers to suit all tastes.</p>
+            <div class="phone-number">Contact: 600502121</div>
+            <p>Feel free to reach out for any inquiries or special requests!</p>
+        </div>
+    </div>
     
     <div class="search-container">
         <input type="text" class="search-box" placeholder="Search wallpapers...">
@@ -209,9 +268,9 @@
     <div class="gallery">
         <!-- Nature Wallpapers -->
         <div class="wallpaper-card" data-category="nature">
-            <img src="https://source.unsplash.com/random/600x400?mountain" alt="Mountain View" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="Mountain Lake" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Mountain Sunset</div>
+                <div class="wallpaper-title">Mountain Lake</div>
                 <div class="wallpaper-category">Nature</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -219,9 +278,9 @@
         </div>
         
         <div class="wallpaper-card" data-category="nature">
-            <img src="https://source.unsplash.com/random/600x400?forest" alt="Forest" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d" alt="Forest" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Green Forest</div>
+                <div class="wallpaper-title">Misty Forest</div>
                 <div class="wallpaper-category">Nature</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -230,9 +289,9 @@
         
         <!-- Abstract Wallpapers -->
         <div class="wallpaper-card" data-category="abstract">
-            <img src="https://source.unsplash.com/random/600x400?abstract,painting" alt="Abstract Art" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1579547945413-497e1b99dac0" alt="Abstract Colors" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Colorful Abstract</div>
+                <div class="wallpaper-title">Color Waves</div>
                 <div class="wallpaper-category">Abstract</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -240,9 +299,9 @@
         </div>
         
         <div class="wallpaper-card" data-category="abstract">
-            <img src="https://source.unsplash.com/random/600x400?liquid,art" alt="Liquid Art" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2" alt="Liquid Art" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Fluid Art</div>
+                <div class="wallpaper-title">Abstract Liquid</div>
                 <div class="wallpaper-category">Abstract</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -251,9 +310,9 @@
         
         <!-- Animals Wallpapers -->
         <div class="wallpaper-card" data-category="animals">
-            <img src="https://source.unsplash.com/random/600x400?tiger" alt="Tiger" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1474511320723-9a56873867b5" alt="Fox" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Wild Tiger</div>
+                <div class="wallpaper-title">Wild Fox</div>
                 <div class="wallpaper-category">Animals</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -261,9 +320,9 @@
         </div>
         
         <div class="wallpaper-card" data-category="animals">
-            <img src="https://source.unsplash.com/random/600x400?wolf" alt="Wolf" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1497752531616-c3afd9760b11" alt="Parrot" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Lone Wolf</div>
+                <div class="wallpaper-title">Colorful Parrot</div>
                 <div class="wallpaper-category">Animals</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -272,9 +331,9 @@
         
         <!-- Cities Wallpapers -->
         <div class="wallpaper-card" data-category="cities">
-            <img src="https://source.unsplash.com/random/600x400?new+york" alt="New York" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1483729558449-99ef09a8c325" alt="New York" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">New York Skyline</div>
+                <div class="wallpaper-title">New York City</div>
                 <div class="wallpaper-category">Cities</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -282,9 +341,9 @@
         </div>
         
         <div class="wallpaper-card" data-category="cities">
-            <img src="https://source.unsplash.com/random/600x400?tokyo" alt="Tokyo" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989" alt="Tokyo" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Tokyo Night</div>
+                <div class="wallpaper-title">Tokyo Streets</div>
                 <div class="wallpaper-category">Cities</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -293,9 +352,9 @@
         
         <!-- Cars Wallpapers -->
         <div class="wallpaper-card" data-category="cars">
-            <img src="https://source.unsplash.com/random/600x400?sports+car" alt="Sports Car" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d" alt="Sports Car" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Red Sports Car</div>
+                <div class="wallpaper-title">Luxury Sports Car</div>
                 <div class="wallpaper-category">Cars</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -303,9 +362,9 @@
         </div>
         
         <div class="wallpaper-card" data-category="cars">
-            <img src="https://source.unsplash.com/random/600x400?luxury+car" alt="Luxury Car" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a" alt="Classic Car" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Black Luxury</div>
+                <div class="wallpaper-title">Vintage Classic</div>
                 <div class="wallpaper-category">Cars</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -314,7 +373,7 @@
         
         <!-- Anime Wallpapers -->
         <div class="wallpaper-card" data-category="anime">
-            <img src="https://source.unsplash.com/random/600x400?anime" alt="Anime Art" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d" alt="Anime Girl" class="wallpaper-img">
             <div class="wallpaper-info">
                 <div class="wallpaper-title">Anime Character</div>
                 <div class="wallpaper-category">Anime</div>
@@ -324,9 +383,9 @@
         </div>
         
         <div class="wallpaper-card" data-category="anime">
-            <img src="https://source.unsplash.com/random/600x400?anime+landscape" alt="Anime Landscape" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1637858868799-7f26a0640eb6" alt="Anime Landscape" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Anime World</div>
+                <div class="wallpaper-title">Anime Cityscape</div>
                 <div class="wallpaper-category">Anime</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -335,9 +394,9 @@
         
         <!-- Space Wallpapers -->
         <div class="wallpaper-card" data-category="space">
-            <img src="https://source.unsplash.com/random/600x400?galaxy" alt="Galaxy" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564" alt="Galaxy" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Distant Galaxy</div>
+                <div class="wallpaper-title">Milky Way</div>
                 <div class="wallpaper-category">Space</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -345,7 +404,7 @@
         </div>
         
         <div class="wallpaper-card" data-category="space">
-            <img src="https://source.unsplash.com/random/600x400?nebula" alt="Nebula" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1454789548928-9efd52dc4031" alt="Nebula" class="wallpaper-img">
             <div class="wallpaper-info">
                 <div class="wallpaper-title">Cosmic Nebula</div>
                 <div class="wallpaper-category">Space</div>
@@ -356,9 +415,9 @@
         
         <!-- Minimal Wallpapers -->
         <div class="wallpaper-card" data-category="minimal">
-            <img src="https://source.unsplash.com/random/600x400?minimal" alt="Minimal Design" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1558470598-a5dda9640f68" alt="Minimal Design" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Simple Design</div>
+                <div class="wallpaper-title">Simple Lines</div>
                 <div class="wallpaper-category">Minimal</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -366,9 +425,9 @@
         </div>
         
         <div class="wallpaper-card" data-category="minimal">
-            <img src="https://source.unsplash.com/random/600x400?simple,design" alt="Minimal Art" class="wallpaper-img">
+            <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176" alt="Minimal Art" class="wallpaper-img">
             <div class="wallpaper-info">
-                <div class="wallpaper-title">Minimal Art</div>
+                <div class="wallpaper-title">Geometric</div>
                 <div class="wallpaper-category">Minimal</div>
                 <div class="wallpaper-resolution">1920x1080</div>
                 <button class="download-btn">Download</button>
@@ -422,6 +481,26 @@
                     wallpaper.style.display = 'none';
                 }
             });
+        });
+        
+        // About Us Modal functionality
+        const modal = document.getElementById("aboutModal");
+        const aboutLink = document.getElementById("aboutLink");
+        const closeBtn = document.querySelector(".close-btn");
+        
+        aboutLink.addEventListener("click", function(e) {
+            e.preventDefault();
+            modal.style.display = "block";
+        });
+        
+        closeBtn.addEventListener("click", function() {
+            modal.style.display = "none";
+        });
+        
+        window.addEventListener("click", function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
         });
     </script>
 </body>
