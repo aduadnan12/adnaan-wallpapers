@@ -1,6 +1,3 @@
-Here's the complete rewritten code with your Instagram profile added and delete functionality for wallpapers:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,19 +59,6 @@ Here's the complete rewritten code with your Instagram profile added and delete 
         
         nav ul li a:hover {
             color: #9d50bb;
-        }
-        
-        .instagram-link {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: white;
-            text-decoration: none;
-        }
-        
-        .instagram-link img {
-            width: 20px;
-            height: 20px;
         }
         
         .search-container {
@@ -170,23 +154,6 @@ Here's the complete rewritten code with your Instagram profile added and delete 
         
         .download-btn:hover {
             background-color: #9d50bb;
-        }
-        
-        .delete-btn {
-            display: block;
-            width: 100%;
-            padding: 8px;
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.3s;
-        }
-        
-        .delete-btn:hover {
-            background-color: #c0392b;
         }
         
         .premium-badge {
@@ -488,4 +455,555 @@ Here's the complete rewritten code with your Instagram profile added and delete 
 <body>
     <div class="spinner" id="loadingSpinner"></div>
     
-    <!-- Admin Login
+    <!-- Admin Login (Hidden by default, shown when ?admin=1 is in URL) -->
+    <div class="admin-login" id="adminLogin">
+        <div class="login-box">
+            <h2>Admin Login</h2>
+            <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+            <button id="loginBtn">Login</button>
+        </div>
+    </div>
+    
+    <!-- Admin Panel (Hidden until logged in) -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h1>Wallpaper Hub Admin Panel</h1>
+            <p>Welcome, Adnan</p>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Add New Wallpaper</h2>
+            <form class="admin-form" id="addWallpaperForm">
+                <div class="form-group">
+                    <label for="wallpaperImage">Wallpaper Image</label>
+                    <input type="file" id="wallpaperImage" accept="image/*" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wallpaperTitle">Title</label>
+                    <input type="text" id="wallpaperTitle" placeholder="Enter wallpaper title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wallpaperCategory">Category</label>
+                    <select id="wallpaperCategory" required>
+                        <option value="">Select a category</option>
+                        <option value="nature">Nature</option>
+                        <option value="abstract">Abstract</option>
+                        <option value="animals">Animals</option>
+                        <option value="cities">Cities</option>
+                        <option value="cars">Cars</option>
+                        <option value="anime">Anime</option>
+                        <option value="space">Space</option>
+                        <option value="minimal">Minimal</option>
+                        <option value="premium">Premium</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wallpaperResolution">Resolution</label>
+                    <input type="text" id="wallpaperResolution" placeholder="e.g. 1920x1080" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wallpaperPremium">Premium Wallpaper?</label>
+                    <select id="wallpaperPremium">
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="admin-btn">Add Wallpaper</button>
+            </form>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Manage Wallpapers</h2>
+            <div class="gallery" id="adminGallery">
+                <!-- Wallpapers will be loaded here for management -->
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Add New Category</h2>
+            <form class="admin-form" id="addCategoryForm">
+                <div class="form-group">
+                    <label for="newCategoryName">Category Name</label>
+                    <input type="text" id="newCategoryName" placeholder="Enter new category name" required>
+                </div>
+                
+                <button type="submit" class="admin-btn">Add Category</button>
+            </form>
+        </div>
+        
+        <div class="admin-section">
+            <button class="admin-btn danger" id="logoutBtn">Logout</button>
+        </div>
+    </div>
+    
+    <!-- Main Website Content -->
+    <header>
+        <div class="logo">Wallpaper Hub</div>
+        <div class="tag">by Adnan</div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#" id="homeLink">Home</a></li>
+            <li><a href="#" id="popularLink">Popular</a></li>
+            <li><a href="#" id="categoriesLink">Categories</a></li>
+            <li><a href="#" id="premiumLink">Premium</a></li>
+            <li><a href="#" id="aboutLink">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- About Us Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>About Wallpaper Hub</h2>
+            <p>Welcome to Wallpaper Hub, your one-stop destination for high-quality wallpapers.</p>
+            <p>Created by Adnan, this website offers a wide variety of wallpapers to suit all tastes.</p>
+            <div class="phone-number">Contact: 600502121</div>
+            <p>Feel free to reach out for any inquiries or special requests!</p>
+        </div>
+    </div>
+
+    <!-- Premium Modal -->
+    <div id="premiumModal" class="modal">
+        <div class="premium-modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Premium Membership</h2>
+            <p>Unlock exclusive wallpapers and features with our premium membership!</p>
+            
+            <div class="premium-features">
+                <h3>Premium Benefits:</h3>
+                <ul>
+                    <li>Access to 1000+ exclusive wallpapers</li>
+                    <li>4K Ultra HD quality downloads</li>
+                    <li>No watermarks on any wallpapers</li>
+                    <li>Early access to new collections</li>
+                    <li>Priority customer support</li>
+                </ul>
+            </div>
+            
+            <button class="subscribe-btn">Subscribe Now - ₹99/month</button>
+        </div>
+    </div>
+
+    <div class="search-container">
+        <input type="text" class="search-box" placeholder="Search wallpapers...">
+    </div>
+
+    <div class="categories">
+        <button class="category-btn active" data-category="all">All</button>
+        <button class="category-btn" data-category="nature">Nature</button>
+        <button class="category-btn" data-category="abstract">Abstract</button>
+        <button class="category-btn" data-category="animals">Animals</button>
+        <button class="category-btn" data-category="cities">Cities</button>
+        <button class="category-btn" data-category="cars">Cars</button>
+        <button class="category-btn" data-category="anime">Anime</button>
+        <button class="category-btn" data-category="space">Space</button>
+        <button class="category-btn" data-category="minimal">Minimal</button>
+        <button class="category-btn" data-category="premium">Premium</button>
+    </div>
+
+    <div class="gallery" id="mainGallery">
+        <!-- Wallpapers will be loaded here -->
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Wallpaper Hub. All rights reserved.</p>
+        <p>Created by Adnan</p>
+    </footer>
+    
+    <!-- Hidden admin access link (only visible when logged in) -->
+    <a href="#" class="admin-link" id="adminAccessLink" title="Admin Panel">A</a>
+
+    <script>
+        // Admin Panel Functionality
+        const ADMIN_PASSWORD = "adnan123"; // Change this to your secure password
+        
+        // Check if admin access is requested
+        const urlParams = new URLSearchParams(window.location.search);
+        const adminRequested = urlParams.get('admin') === '1';
+        
+        // Check if already logged in
+        const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+        
+        const adminLogin = document.getElementById('adminLogin');
+        const adminPanel = document.getElementById('adminPanel');
+        const adminAccessLink = document.getElementById('adminAccessLink');
+        
+        if (adminRequested && !isLoggedIn) {
+            adminLogin.style.display = 'flex';
+        } else if (isLoggedIn) {
+            adminPanel.style.display = 'block';
+            adminAccessLink.style.display = 'flex';
+        }
+        
+        // Login functionality
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                localStorage.setItem('adminLoggedIn', 'true');
+                adminLogin.style.display = 'none';
+                adminPanel.style.display = 'block';
+                adminAccessLink.style.display = 'flex';
+            } else {
+                alert('Incorrect password!');
+            }
+        });
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('adminLoggedIn');
+            window.location.href = window.location.pathname; // Reload without admin parameter
+        });
+        
+        // Admin access link
+        adminAccessLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            adminPanel.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // IndexedDB Database Setup
+        let db;
+        const request = indexedDB.open('WallpaperHubDB', 1);
+
+        request.onerror = function(event) {
+            console.error("Database error:", event.target.error);
+        };
+
+        request.onupgradeneeded = function(event) {
+            db = event.target.result;
+            const store = db.createObjectStore('wallpapers', { keyPath: 'id' });
+            store.createIndex('category', 'category', { unique: false });
+        };
+
+        request.onsuccess = function(event) {
+            db = event.target.result;
+            refreshGalleries();
+        };
+
+        // Add wallpaper to IndexedDB
+        function addWallpaper(wallpaper) {
+            const transaction = db.transaction(['wallpapers'], 'readwrite');
+            const store = transaction.objectStore('wallpapers');
+            store.add(wallpaper);
+        }
+
+        // Get all wallpapers from IndexedDB
+        function getAllWallpapers(callback) {
+            const transaction = db.transaction(['wallpapers'], 'readonly');
+            const store = transaction.objectStore('wallpapers');
+            const request = store.getAll();
+            
+            request.onsuccess = function() {
+                callback(request.result);
+            };
+        }
+
+        // Add Wallpaper functionality
+        document.getElementById('addWallpaperForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('wallpaperImage');
+            const title = document.getElementById('wallpaperTitle').value;
+            const category = document.getElementById('wallpaperCategory').value;
+            const resolution = document.getElementById('wallpaperResolution').value;
+            const isPremium = document.getElementById('wallpaperPremium').value === 'yes';
+            
+            if (fileInput.files.length === 0) return;
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                const wallpaper = {
+                    imgUrl: event.target.result,
+                    title,
+                    category,
+                    resolution,
+                    isPremium,
+                    id: Date.now()
+                };
+                
+                addWallpaper(wallpaper);
+                refreshGalleries();
+                e.target.reset();
+                alert('Wallpaper added successfully!');
+            };
+            
+            reader.readAsDataURL(file);
+        });
+
+        // Function to create wallpaper card
+        function createWallpaperCard(wallpaper) {
+            const wallpaperCard = document.createElement('div');
+            wallpaperCard.className = 'wallpaper-card';
+            wallpaperCard.dataset.category = wallpaper.category;
+            
+            if (wallpaper.isPremium) {
+                wallpaperCard.innerHTML = `
+                    <div class="premium-badge">Premium</div>
+                    <img src="${wallpaper.imgUrl}" alt="${wallpaper.title}" class="wallpaper-img">
+                    <div class="wallpaper-info">
+                        <div class="wallpaper-title">${wallpaper.title}</div>
+                        <div class="wallpaper-category">${wallpaper.category}</div>
+                        <div class="wallpaper-resolution">${wallpaper.resolution}</div>
+                        <button class="download-btn premium-download">Unlock Premium</button>
+                    </div>
+                `;
+            } else {
+                wallpaperCard.innerHTML = `
+                    <img src="${wallpaper.imgUrl}" alt="${wallpaper.title}" class="wallpaper-img">
+                    <div class="wallpaper-info">
+                        <div class="wallpaper-title">${wallpaper.title}</div>
+                        <div class="wallpaper-category">${wallpaper.category}</div>
+                        <div class="wallpaper-resolution">${wallpaper.resolution}</div>
+                        <button class="download-btn" data-img="${wallpaper.imgUrl}">Download</button>
+                    </div>
+                `;
+            }
+            
+            return wallpaperCard;
+        }
+
+        // Function to refresh galleries
+        function refreshGalleries() {
+            getAllWallpapers(function(wallpapers) {
+                const mainGallery = document.getElementById('mainGallery');
+                const adminGallery = document.getElementById('adminGallery');
+                
+                mainGallery.innerHTML = '';
+                adminGallery.innerHTML = '';
+                
+                wallpapers.forEach(wallpaper => {
+                    const wallpaperCard = createWallpaperCard(wallpaper);
+                    mainGallery.appendChild(wallpaperCard.cloneNode(true));
+                    adminGallery.appendChild(wallpaperCard);
+                });
+                
+                // Add event listeners to all download buttons
+                document.querySelectorAll('.download-btn:not(.premium-download)').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const imgUrl = this.getAttribute('data-img');
+                        const title = this.parentElement.querySelector('.wallpaper-title').textContent;
+                        downloadWallpaper(imgUrl, title);
+                    });
+                });
+                
+                // Add event listeners to premium download buttons
+                document.querySelectorAll('.premium-download').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        document.getElementById('premiumModal').style.display = 'block';
+                    });
+                });
+                
+                // Add sample wallpapers if database is empty
+                if (wallpapers.length === 0) {
+                    initializeSampleWallpapers();
+                }
+            });
+        }
+
+        // Function to initialize sample wallpapers
+        function initializeSampleWallpapers() {
+            const sampleWallpapers = [
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+                    title: "Mountain Lake",
+                    category: "nature",
+                    resolution: "1920x1080",
+                    isPremium: false,
+                    id: 1
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d",
+                    title: "Misty Forest",
+                    category: "nature",
+                    resolution: "1920x1080",
+                    isPremium: false,
+                    id: 2
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1579547945413-497e1b99dac0",
+                    title: "Color Waves",
+                    category: "abstract",
+                    resolution: "1920x1080",
+                    isPremium: false,
+                    id: 3
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2",
+                    title: "Abstract Liquid",
+                    category: "abstract",
+                    resolution: "1920x1080",
+                    isPremium: false,
+                    id: 4
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1541963463532-d68292c34b19",
+                    title: "Exclusive Design 1",
+                    category: "premium",
+                    resolution: "4K Ultra HD",
+                    isPremium: true,
+                    id: 5
+                },
+                {
+                    imgUrl: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
+                    title: "Exclusive Design 2",
+                    category: "premium",
+                    resolution: "4K Ultra HD",
+                    isPremium: true,
+                    id: 6
+                }
+            ];
+            
+            sampleWallpapers.forEach(wallpaper => {
+                addWallpaper(wallpaper);
+            });
+        }
+
+        // Function to handle wallpaper download
+        function downloadWallpaper(imgUrl, title) {
+            const spinner = document.getElementById('loadingSpinner');
+            spinner.style.display = 'block';
+            
+            const fileName = title.replace(/\s+/g, '-') + '.jpg';
+            
+            // Create a canvas to add watermark
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.src = imgUrl;
+            
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                
+                // Draw the original image
+                ctx.drawImage(img, 0, 0);
+                
+                // Add watermark text
+                ctx.font = '30px Arial';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.textAlign = 'center';
+                ctx.fillText('Adnan', canvas.width/2, canvas.height/2);
+                
+                // For mobile devices
+                if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    // Convert canvas to image and open in new tab
+                    const watermarkedImg = canvas.toDataURL('image/jpeg');
+                    window.open(watermarkedImg, '_blank');
+                    spinner.style.display = 'none';
+                } else {
+                    // For desktop, download the watermarked image
+                    const link = document.createElement('a');
+                    link.download = fileName;
+                    link.href = canvas.toDataURL('image/jpeg');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    spinner.style.display = 'none';
+                }
+            };
+            
+            img.onerror = function() {
+                // Fallback to direct download if watermarking fails
+                const link = document.createElement('a');
+                link.href = imgUrl;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                spinner.style.display = 'none';
+            };
+        }
+
+        // Category filter functionality
+        document.querySelectorAll('.category-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                const category = button.dataset.category;
+                const wallpapers = document.querySelectorAll('.wallpaper-card');
+                
+                wallpapers.forEach(wallpaper => {
+                    if (category === 'all' || wallpaper.dataset.category === category) {
+                        wallpaper.style.display = 'block';
+                    } else {
+                        wallpaper.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Search functionality
+        const searchBox = document.querySelector('.search-box');
+        searchBox.addEventListener('input', () => {
+            const searchTerm = searchBox.value.toLowerCase();
+            const wallpapers = document.querySelectorAll('.wallpaper-card');
+            
+            wallpapers.forEach(wallpaper => {
+                const title = wallpaper.querySelector('.wallpaper-title').textContent.toLowerCase();
+                const category = wallpaper.querySelector('.wallpaper-category').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || category.includes(searchTerm)) {
+                    wallpaper.style.display = 'block';
+                } else {
+                    wallpaper.style.display = 'none';
+                }
+            });
+        });
+        
+        // About Us Modal functionality
+        const aboutModal = document.getElementById("aboutModal");
+        const aboutLink = document.getElementById("aboutLink");
+        
+        aboutLink.addEventListener("click", function(e) {
+            e.preventDefault();
+            aboutModal.style.display = "block";
+        });
+        
+        // Premium Modal functionality
+        const premiumModal = document.getElementById("premiumModal");
+        const premiumLink = document.getElementById("premiumLink");
+        
+        premiumLink.addEventListener("click", function(e) {
+            e.preventDefault();
+            premiumModal.style.display = "block";
+        });
+        
+        // Close modal functionality
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener("click", function() {
+                aboutModal.style.display = "none";
+                premiumModal.style.display = "none";
+            });
+        });
+        
+        window.addEventListener("click", function(event) {
+            if (event.target == aboutModal || event.target == premiumModal) {
+                aboutModal.style.display = "none";
+                premiumModal.style.display = "none";
+            }
+        });
+
+        // Initialize the galleries when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            refreshGalleries();
+        });
+    </script>
+</body>
+</html>
